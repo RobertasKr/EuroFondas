@@ -1,0 +1,69 @@
+<odoo>
+    <!-- Tree View for Book Loan -->
+    <!-- This view displays a list (tree view) of book loans with selected fields (contact, start date, end date, and status) in a table format.
+         It provides an overview of multiple loans at a glance in the list. -->
+    <record id="view_library_book_loan_tree" model="ir.ui.view">
+        <field name="name">library.book.loan.tree</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="contact_id"/>
+                <field name="start_date"/>
+                <field name="end_date"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View for Book Loan -->
+    <!-- This form view allows users to view and edit details for a single book loan record.
+         Fields include contact (borrower), start and end dates, status of the loan, and selected books.
+         The 'book_ids' field uses a 'many2many_tags' widget to display multiple books as tags. -->
+    <record id="view_library_book_loan_form" model="ir.ui.view">
+        <field name="name">library.book.loan.form</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="contact_id"/>
+                        <field name="start_date"/>
+                        <field name="end_date"/>
+                        <field name="state"/>
+                        <field name="book_ids" widget="many2many_tags"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View for Book Loan -->
+    <!-- Defines the search view for book loans, allowing users to filter loan records by contact and loan status in the search bar.
+         This view enhances user experience by enabling targeted searches based on these fields. -->
+    <record id="view_library_book_loan_search" model="ir.ui.view">
+        <field name="name">library.book.loan.search</field>
+        <field name="model">library.book.loan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="contact_id" string="Contact"/>
+                <field name="state" string="Loan Status"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action for Book Loan -->
+    <!-- This action specifies the entry point for accessing the book loan views. It opens the tree view by default, with a form view available upon clicking any record.
+         The 'search_view_id' is linked to the search view defined above, enabling search options in this window. -->
+    <record id="action_library_book_loan" model="ir.actions.act_window">
+        <field name="name">Book Loans</field>
+        <field name="res_model">library.book.loan</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_library_book_loan_search"/>
+    </record>
+
+    <!-- Menu for Book Loans -->
+    <!-- Adds a menu item for accessing book loans under the 'Library' root menu.
+         This menu item triggers the book loan action, allowing users to view and manage book loan records. -->
+    <menuitem id="menu_library_book_loans" name="Book Loans"
+              parent="menu_library_root" action="action_library_book_loan" sequence="30"/>
+</odoo>
