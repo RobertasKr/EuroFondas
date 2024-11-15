@@ -1,5 +1,6 @@
 # Import the necessary modules from Odoo
-from odoo import models, fields
+from odoo import models, fields, api
+from datetime import date
 
 
 class BookLoan(models.Model):
@@ -35,3 +36,25 @@ class BookLoan(models.Model):
         ('returned', 'Returned'),  # Returned: Loan returned to the library
         ('canceled', 'Canceled'),  # Canceled: Loan canceled before completion
     ], string="Status", default='reserved', required=True)
+
+    @api.model
+    def send_overdue_reminders(self):
+        """
+        Checks all book loans for overdue entries and sends reminders
+        to the associated contacts.
+        """
+        overdue_loans = self.search([
+            ('end_date', '<', date.today()),  # End date is in the past
+            ('state', '=', 'issued')          # Loan is still issued
+        ])
+        for loan in overdue_loans:
+            if loan.contact_id.email:
+                # Logically, here you would send an email, but we'll log for now.
+                self.env['mail.mail'].create({
+                    'subject': 'Overdue Book Reminder',
+                    'body_html': f'<p>Dear {loan.contact_id.name},</p>'
+                                 f'<p>You have overdue books. Please return them as soon as possible.</p>',
+                    'email_to': loan.contact_id.email,
+                }).send()
+
+        return True
