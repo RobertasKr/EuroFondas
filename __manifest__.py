@@ -8,6 +8,7 @@
         'data/cron.xml',
         'views/book_views.xml',
         'views/book_loan_views.xml',
+        'views/book_loan_report.xml',
         'security/ir.model.access.csv',
     ],
     'installable': True,

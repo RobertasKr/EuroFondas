@@ -1,0 +1,65 @@
+<odoo>
+    <!-- QWeb Template for Book Loan History -->
+    <!-- This template defines the structure of the Book Loan History report.
+         It uses the res.partner model and displays the partner's details and loan history. -->
+    <template id="book_loan_report_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="partner">
+                <div class="page">
+                    <h2>Book Loan History</h2>
+                    <h3>Contact: <span t-field="partner.name"/></h3>
+                    <h4>Email: <span t-field="partner.email"/></h4>
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Loan ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Status</th>
+                                <th>Books</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="partner.book_loan_ids" t-as="loan">
+                                <tr>
+                                    <td>
+                                        <t t-esc="loan.id"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="loan.start_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="loan.end_date"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="loan.state"/>
+                                    </td>
+                                    <td>
+                                        <t t-foreach="loan.book_ids" t-as="book">
+                                            <div>
+                                                <span t-field="book.name"/>,
+                                            </div>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!-- Report Action Definition -->
+    <!-- This record defines a report action for the Book Loan History report,
+         binding it to the res.partner model and using the book_loan_report_template. -->
+    <record id="action_report_contact_book_loan_history" model="ir.actions.report">
+        <field name="name">Book Loan History</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">library_management.book_loan_report_template</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

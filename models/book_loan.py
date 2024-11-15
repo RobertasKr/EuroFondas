@@ -37,6 +37,9 @@ class BookLoan(models.Model):
         ('canceled', 'Canceled'),  # Canceled: Loan canceled before completion
     ], string="Status", default='reserved', required=True)
 
+    # Many-to-one relationship with res.partner, specifically to track the borrower
+    partner_id = fields.Many2one('res.partner', string="Borrower")
+
     @api.model
     def send_overdue_reminders(self):
         """
@@ -49,7 +52,7 @@ class BookLoan(models.Model):
         ])
         for loan in overdue_loans:
             if loan.contact_id.email:
-                # Logically, here you would send an email, but we'll log for now.
+                # Create and send an email reminder for overdue books
                 self.env['mail.mail'].create({
                     'subject': 'Overdue Book Reminder',
                     'body_html': f'<p>Dear {loan.contact_id.name},</p>'
@@ -58,3 +61,15 @@ class BookLoan(models.Model):
                 }).send()
 
         return True
+
+
+class ResPartner(models.Model):
+    """
+    This model extends the res.partner model to include a one-to-many
+    relationship with book loans, allowing tracking of borrowing history.
+    """
+
+    _inherit = 'res.partner'
+
+    # Define a one-to-many field for book loans associated with the partner
+    book_loan_ids = fields.One2many('library.book.loan', 'contact_id', string="Book Loans")

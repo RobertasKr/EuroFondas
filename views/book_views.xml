@@ -1,66 +1,94 @@
 <odoo>
-  <!-- Tree View for Library Book -->
-  <!-- Defines a tree (list) view for the library.book model, showing book records with specific fields.
-       This view provides a concise overview, displaying each book’s title, page count, and associated genres. -->
-  <record id="view_library_book_tree" model="ir.ui.view">
-      <field name="name">library.book.tree</field>
-      <field name="model">library.book</field>
-      <field name="arch" type="xml">
-          <tree>
-              <field name="name"/>
-              <field name="page_count"/>
-              <field name="genre_ids"/>
-          </tree>
-      </field>
-  </record>
+    <!-- Tree View for Library Book -->
+    <!-- Defines a tree (list) view for the library.book model, showing book records with specific fields.
+         This view provides a concise overview, displaying each book’s title, page count, and associated genres. -->
+    <record id="view_library_book_tree" model="ir.ui.view">
+        <field name="name">library.book.tree</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="page_count"/>
+                <field name="genre_ids"/>
+            </tree>
+        </field>
+    </record>
 
-  <!-- Form View for Library Book -->
-  <!-- Defines a form view for the library.book model, allowing detailed entry of book information.
-       This view is used to input and edit all available details for a specific book record. -->
-  <record id="view_library_book_form" model="ir.ui.view">
-      <field name="name">library.book.form</field>
-      <field name="model">library.book</field>
-      <field name="arch" type="xml">
-          <form>
-              <group>
-                  <field name="name"/>
-                  <field name="description"/>
-                  <field name="page_count"/>
-                  <field name="genre_ids" widget="many2many_tags"/>
-              </group>
-          </form>
-      </field>
-  </record>
+    <!-- Form View for Library Book -->
+    <!-- Defines a form view for the library.book model, allowing detailed entry of book information.
+         This view is used to input and edit all available details for a specific book record. -->
+    <record id="view_library_book_form" model="ir.ui.view">
+        <field name="name">library.book.form</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="name"/>
+                    <field name="description"/>
+                    <field name="page_count"/>
+                    <field name="genre_ids" widget="many2many_tags"/>
+                </group>
+            </form>
+        </field>
+    </record>
 
-  <!-- Search View for Library Book -->
-  <!-- Defines a search view for the library.book model, enabling search functionality.
-       Users can search for books based on title and genre. -->
-  <record id="view_library_book_search" model="ir.ui.view">
-      <field name="name">library.book.search</field>
-      <field name="model">library.book</field>
-      <field name="arch" type="xml">
-          <search>
-              <field name="name" string="Title"/>
-              <field name="genre_ids" string="Genre"/>
-          </search>
-      </field>
-  </record>
+    <!-- Search View for Library Book -->
+    <!-- Defines a search view for the library.book model, enabling search functionality.
+         Users can search for books based on title and genre. -->
+    <record id="view_library_book_search" model="ir.ui.view">
+        <field name="name">library.book.search</field>
+        <field name="model">library.book</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Title"/>
+                <field name="genre_ids" string="Genre"/>
+            </search>
+        </field>
+    </record>
 
-  <!-- Action for Library Book -->
-  <!-- This action defines a window view that displays library book records.
-       It opens the tree view by default, with the form view available upon clicking a record.
-       The search view is linked for filtering results based on specific fields. -->
-  <record id="action_library_book" model="ir.actions.act_window">
-      <field name="name">Books</field>
-      <field name="res_model">library.book</field>
-      <field name="view_mode">tree,form</field>
-      <field name="search_view_id" ref="view_library_book_search"/>
-  </record>
+    <!-- Action for Library Book -->
+    <!-- This action defines a window view that displays library book records.
+         It opens the tree view by default, with the form view available upon clicking a record.
+         The search view is linked for filtering results based on specific fields. -->
+    <record id="action_library_book" model="ir.actions.act_window">
+        <field name="name">Books</field>
+        <field name="res_model">library.book</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_library_book_search"/>
+    </record>
 
-  <!-- Menu Structure for Library Module -->
-  <!-- Defines the main Library menu and a submenu for managing books.
-       Users can access book records through the "Books" menu item under the "Library" parent menu. -->
-  <menuitem id="menu_library_root" name="Library" sequence="10"/>
-  <menuitem id="menu_library_books" parent="menu_library_root"
-            action="action_library_book" name="Books" sequence="20"/>
+    <!-- Menu Structure for Library Module -->
+    <!-- Defines the main Library menu and a submenu for managing books.
+         Users can access book records through the "Books" menu item under the "Library" parent menu. -->
+    <menuitem id="menu_library_root" name="Library" sequence="10"/>
+    <menuitem id="menu_library_books" parent="menu_library_root" action="action_library_book" name="Books" sequence="20"/>
+
+    <!-- Define the action for the Book Loan History Report -->
+    <!-- This record defines a report action for the Book Loan History report,
+         binding it to the res.partner model and using the book_loan_report_template. -->
+    <record id="action_report_contact_book_loan_history" model="ir.actions.report">
+        <field name="name">Book Loan History</field>
+        <field name="model">res.partner</field> <!-- The model for the report -->
+        <field name="report_type">qweb-pdf</field> <!-- The type of report -->
+        <field name="report_name">library_management.book_loan_report_template</field> <!-- Template to use -->
+        <field name="binding_model_id" ref="base.model_res_partner"/> <!-- Bind to the res.partner model -->
+        <field name="binding_type">report</field> <!-- Bind as a report -->
+    </record>
+
+    <!-- Add a button to the contact form to access the Book Loan History -->
+    <!-- This section inherits the base res.partner form view and adds a button for the Book Loan History report. -->
+    <record id="view_partner_form_inherited" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.library</field> <!-- Name of the view -->
+        <field name="model">res.partner</field> <!-- Model to inherit -->
+        <field name="inherit_id" ref="base.view_partner_form"/> <!-- Existing view to inherit -->
+        <field name="arch" type="xml">
+            <!-- Add the button inside the first available group element -->
+            <xpath expr="//sheet" position="inside">
+                <button name="%(action_report_contact_book_loan_history)d"
+                        string="Book Loan History"
+                        type="action"
+                        class="oe_highlight"/> <!-- Action button -->
+            </xpath>
+        </field>
+    </record>
 </odoo>

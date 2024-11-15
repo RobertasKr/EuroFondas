@@ -1,5 +1,21 @@
 <odoo>
     <data noupdate="1">
+        <!--
+        This cron job is responsible for sending reminders to users who have overdue books.
+        It runs once a day and checks for overdue book loans.
+        When triggered, it calls the `send_overdue_reminders` method from the `library.book.loan` model.
+
+        Parameters:
+        - name: The name of the cron job ("Send Overdue Book Reminders").
+        - model_id: Reference to the `library.book.loan` model.
+        - state: Indicates the cron job executes Python code.
+        - code: Specifies the method to execute (`model.send_overdue_reminders()`).
+        - interval_number: The interval at which the cron job is run (1 day).
+        - interval_type: The type of interval (daily).
+        - active: If True, the cron job is active.
+        - numbercall: Number of times the job is called (-1 means unlimited).
+        - doall: If False, the job is skipped for missed executions.
+        -->
         <record id="cron_send_overdue_reminders" model="ir.cron">
             <field name="name">Send Overdue Book Reminders</field>
             <field name="model_id" ref="model_library_book_loan"/>
